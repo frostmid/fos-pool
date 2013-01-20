@@ -1,0 +1,186 @@
+var vows = require ('vows'),
+	assert = require ('assert'),
+
+	Q = require ('q'),
+	_  = require ('lodash'),
+	Pool = require ('../index.js');
+
+function wrap4promise (callback, ctx) {
+	return {
+		success: function (result) {
+			callback.call (ctx, null, result);
+		},
+
+		error: function (error) {
+			callback.apply (ctx, error);
+		}
+	};
+}
+
+var settings = {
+	server: {
+		host: '89.179.119.16',
+		auth: {
+			username: 'lyxsus@gmail.com',
+			password: 'letmein'
+		}
+	}
+};
+
+
+vows.describe ('fos-pool/general').addBatch ({
+	'pool': {
+		topic: function () {
+			var callback = wrap4promise (this.callback, this),
+				pool = new Pool (settings);
+
+			Q.when (pool.ready ())
+				.then (callback.success)
+				.fail (callback.error)
+				.done ();
+		},
+
+		'ready': function (pool) {
+			assert.isTrue (pool.isReady);
+		},
+
+		'client': {
+			topic: function (pool) {
+				var callback = wrap4promise (this.callback, this),
+					client = pool.client ({
+						auth: {
+							username: 'lyxsus@gmail.com',
+							password: 'letmein'
+						}
+					});
+
+				Q.when (client.ready ())
+					.then (callback.success)
+					.fail (callback.error)
+					.done ();
+			},
+
+			'not null': function (client) {
+				assert.isNotNull (client);
+			},
+
+			'ready': function (client) {
+				assert.isTrue (client.isReady);
+			},
+
+			'correct': function (client) {
+				assert.equal (client.user.get ('name'), 'lyxsus@gmail.com');
+			},
+
+			'resources': {
+				'document': {
+					topic: function (client) {
+						var callback = wrap4promise (this.callback, this),
+							resource = client.resources.get ('urn:debug:test/example');
+
+						Q.when (resource)
+							.then (callback.success)
+							.fail (callback.error)
+							.done ();
+					},
+
+					'not null': function (resource) {
+						assert.isNotNull (resource);
+					},
+
+					'ready': function (resource) {
+						assert.isTrue (resource.isReady);
+					},
+
+					'correct': function (resource) {
+						assert.equal (resource.get ('_id'), 'urn:debug:test/example');
+						assert.isNotNull (resource.get ('_rev'));
+					},
+
+					'update': {
+						topic: function (resource) {
+							var callback = wrap4promise (this.callback, this),
+								newTitle = '#' + Date.now ();
+
+							Q.when (resource.save ({
+								title: newTitle
+							}))
+								.then (callback.success)
+								.fail (callback.error)
+								.done ();
+						},
+
+						'no errors': function (resource) {
+							assert.isNull (resource.error);
+						},
+
+						'ready': function (resource) {
+							assert.isTrue (resource.isReady);
+						}
+					}
+				},
+
+				'missing document': {
+					topic: function (client) {
+						var callback = wrap4promise (this.callback, this),
+							resource = client.resources.get ('urn:debug:test/not-found');
+
+						Q.when (resource)
+							.fail (callback.success)
+							.done ();
+					},
+
+					'not found': function (error) {
+						assert.equal (error.error, 'not_found');
+					}
+				},
+
+				'collection': {
+					topic: function (client) {
+						var callback = wrap4promise (this.callback, this),
+							resource = client.resources.get ('urn:debug:test?limit=1');
+
+						Q.when (resource)
+							.then (callback.success)
+							.fail (callback.error)
+							.done ();
+					},
+
+					'not null': function (resource) {
+						assert.isNotNull (resource);
+					},
+
+					'ready': function (resource) {
+						assert.isTrue (resource.isReady);
+					},
+
+					'has rows': function (resource) {
+						var rows = resource.get ('rows')
+						assert.isArray (rows);
+						assert.equal (rows.length, 1)
+					},
+
+					'correct': function (resource) {
+						assert.equal (resource.get ('_id'), 'urn:debug:test?limit=1');
+						assert.isNotNull (resource.get ('_rev'));
+					}
+				},
+
+				'missing collection': {
+					topic: function (client) {
+						var callback = wrap4promise (this.callback, this),
+							resource = client.resources.get ('urn:app-not-found');
+
+						Q.when (resource)
+							.fail (callback.success)
+							.done ();
+					},
+
+					'not found': function (error) {
+						assert.equal (error.error, 'app_not_found');
+					}
+				}
+			}
+		}
+	}
+}).export (module);;
