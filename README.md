@@ -1,0 +1,4 @@
+fos-pool
+========
+
+resources manager
