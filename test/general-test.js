@@ -160,9 +160,16 @@ vows.describe ('fos-pool/general').addBatch ({
 						assert.equal (rows.length, 1)
 					},
 
-					'correct': function (resource) {
+					'correct id': function (resource) {
 						assert.equal (resource.get ('_id'), 'urn:debug:test?limit=1');
-						assert.isNotNull (resource.get ('_rev'));
+					},
+
+					'has _rev': function (resource) {
+						assert.isTrue (/^\d+\-update_seq$/.test (resource.get ('_rev')));
+					},
+
+					'has type': function (resource) {
+						assert.isTrue (/^urn:/.test (resource.get ('type')));
 					}
 				},
 

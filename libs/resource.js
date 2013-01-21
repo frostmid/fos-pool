@@ -39,7 +39,13 @@ _.extend (module.exports.prototype, {
 	},
 
 	get: function (key) {
-		return this.source.data [key];
+		switch (key) {
+			case '_id':
+				return this.id;
+
+			default:
+				return this.source.data [key];
+		}
 	},
 
 	set: function () {

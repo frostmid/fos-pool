@@ -70,11 +70,13 @@ _.extend (module.exports.prototype, {
 			.then (function (designDoc) {
 				var uri = require ('URIjs') (id),
 					search = uri.search (true),
+					type = _.first (_.keys (designDoc.data.views)),
 					resolved = {
 						design: ddocId,
-						view: _.first (_.keys (designDoc.data.views)),
+						view: type,
 						// autoreduce: true
-						reduce: false
+						reduce: false,
+						type: type
 					},
 					evaluate = require ('fos-evaluate');
 
