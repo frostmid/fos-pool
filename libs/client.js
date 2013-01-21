@@ -46,7 +46,7 @@ _.extend (module.exports.prototype, {
 			});
 	},
 
-	update: function (user) {
+	fetched: function (user) {
 		this.user = user;
 	},
 
@@ -60,5 +60,15 @@ _.extend (module.exports.prototype, {
 		}
 
 		return options;
+	},
+
+	release: function () {
+		return Q.all ([this.resources.release (this), this.user.release (this)])
+			.then (_.bind (function () {
+				delete this.resources;
+				delete this.user;
+				delete this.settings;
+				delete this.pool;
+			}, this));
 	}
 });

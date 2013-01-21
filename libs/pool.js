@@ -65,10 +65,10 @@ _.extend (module.exports.prototype, {
 	},
 
 	client: function (params) {
-		return new Client (this, params);
+		return (new Client (this, params)).ready ();
 	},
 
-	update: function (applications) {
+	fetched: function (applications) {
 		var appIndex = {};
 			
 		_.each (applications.get ('rows'), function (row) {

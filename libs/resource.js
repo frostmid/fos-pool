@@ -24,14 +24,15 @@ _.extend (module.exports.prototype, {
 			}, this));
 	},
 
-	update: function (source) {
+	fetched: function (source) {
 		if (this.source) {
+			console.log (this.source);
 			this.source.off ('change', this.change);
 		}
 
 		(this.source = source)
 			.lock (this)
-			.on ('change', this.change);
+			.once ('change', this.change);
 	},
 
 	change: function () {
@@ -70,5 +71,18 @@ _.extend (module.exports.prototype, {
 
 	remove: function () {
 		return this.source.remove (this.origin);
+	},
+
+	stringify: function () {
+		return JSON.stringify (this.source.data);
+	},
+
+	release: function () {
+		if (this.source) {
+			this.source.removeListener ('change', this.change);
+			delete this.source;
+		}
+
+		console.log ('release resource', this.id);
 	}
 });

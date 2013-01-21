@@ -19,6 +19,11 @@ function urn2ddocId (urn) {
 	}
 }
 
+var NotFound = {
+	error: 'app_not_found',
+	reason: 'missing'
+};
+
 
 module.exports = function (client) {
 	this.client = client;
@@ -43,7 +48,7 @@ _.extend (module.exports.prototype, {
 			app = pool.findApp (id),
 			dbs;
 
-		if (!app) throw { error: 'app_not_found', reason: 'missing' };
+		if (!app) throw NotFound;
 
 		dbs = pool.getAppDbs (app)
 
@@ -91,8 +96,6 @@ _.extend (module.exports.prototype, {
 				if (designDoc.data.resolve) {
 					resolved = evaluate (designDoc.data.resolve) (uri, resolved);
 				}
-
-				resolved.include_docs = true;
 
 				return resolved;
 			})
@@ -158,5 +161,12 @@ _.extend (module.exports.prototype, {
 			return ((readers.roles.indexOf (role) !== -1) ||
 				(admins.roles.indexOf (role) !== -1));
 		});
+	},
+
+	release: function () {
+		return Q.all (_.map (this.models, function (resource) {resource.release (this);}, this))
+			.then (function () {
+				console.log ('release resources');
+			})
 	}
 });
