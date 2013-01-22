@@ -124,14 +124,14 @@ _.extend (module.exports.prototype, {
 			db = this.client.user.get ('database');
 		}
 
-		return Q.when (this.checkDbSecurity (db))
+		return this.checkDbSecurity (db)
 			.then (_.bind (function (allowed) {
 				return db || this.selectDb (dbs);
 			}, this));
 	},
 
 	checkDbSecurity: function (name) {
-		Q.when (this.client.pool.server.database (name))
+		return Q.when (this.client.pool.server.database (name))
 			.then (function (database) {
 				return database.documents.get ('_security');
 			})
@@ -175,7 +175,7 @@ _.extend (module.exports.prototype, {
 			return resource.release (this, true);
 		}, this);
 
-		return Q.when (_.map (this.models, release))
+		return Q.all (_.map (this.models, release))
 			.then (_.bind (this.cleanup, this));
 	},
 

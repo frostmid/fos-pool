@@ -57,10 +57,10 @@ _.extend (module.exports.prototype, {
 	buildIndex: function () {
 		return Q.when (this.server.database ('sys/apps'))
 			.then (function (database) {
-				return Q.when (database.views.get ('urn:applications', 'all'));
+				return database.views.get ('urn:applications', 'all');
 			})
 			.then (function (view) {
-				return Q.when (view.get ({}));
+				return view.get ({});
 			});
 	},
 
