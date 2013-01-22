@@ -1,7 +1,8 @@
 var _ = require ('lodash'),
 	Q = require ('q'),
 
-	Resource = require ('./resource');
+	Resource = require ('./resource'),
+	mixins = require ('fos-mixins');
 
 function isApp (urn) {
 	return urn.indexOf ('/') === -1;
@@ -29,6 +30,8 @@ module.exports = function (client) {
 	this.client = client;
 	this.models = {};
 };
+
+mixins (['lock'], module.exports);
 
 _.extend (module.exports.prototype, {
 	get: function (id) {
@@ -163,10 +166,10 @@ _.extend (module.exports.prototype, {
 		});
 	},
 
-	release: function () {
+	dispose: function () {
 		return Q.all (_.map (this.models, function (resource) {resource.release (this);}, this))
 			.then (function () {
 				console.log ('release resources');
-			})
+			});
 	}
 });

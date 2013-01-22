@@ -13,7 +13,7 @@ module.exports = function (pool, settings) {
 	this.resources = new Resources (this);
 };
 
-mixins (['ready'], module.exports);
+mixins (['ready', 'lock'], module.exports);
 
 function getUserId (info) {
 	return 'org.couchdb.user:' + (info.name || 'nobody');
@@ -62,7 +62,7 @@ _.extend (module.exports.prototype, {
 		return options;
 	},
 
-	release: function () {
+	dispose: function () {
 		return Q.all ([this.resources.release (this), this.user.release (this)])
 			.then (_.bind (function () {
 				delete this.resources;

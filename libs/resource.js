@@ -10,7 +10,7 @@ module.exports = function (resources, id) {
 	this.change = _.bind (this.change, this);
 };
 
-mixins (['emitter', 'ready'], module.exports);
+mixins (['emitter', 'ready', 'lock'], module.exports);
 
 _.extend (module.exports.prototype, {
 	source: null,
@@ -77,11 +77,13 @@ _.extend (module.exports.prototype, {
 		return JSON.stringify (this.source.data);
 	},
 
-	release: function () {
+	dispose: function () {
 		if (this.source) {
 			this.source.removeListener ('change', this.change);
 			delete this.source;
 		}
+
+		this.removeAllListeners ();
 
 		console.log ('release resource', this.id);
 	}
