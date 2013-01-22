@@ -188,6 +188,30 @@ vows.describe ('fos-pool/general').addBatch ({
 					}
 				}
 			}
+		},
+
+		'nobody': {
+			topic: function (pool) {
+				var callback = wrap4promise (this.callback, this),
+					client = pool.client ();
+
+				Q.when (client)
+					.then (callback.success)
+					.fail (callback.error)
+					.done ();
+			},
+
+			'not null': function (client) {
+				assert.isNotNull (client);
+			},
+
+			'ready': function (client) {
+				assert.isTrue (client.isReady);
+			},
+
+			'correct': function (client) {
+				assert.equal (client.user.get ('name'), 'nobody');
+			}
 		}
 	}
 }).export (module);;

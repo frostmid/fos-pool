@@ -9,7 +9,7 @@ var _ = require ('lodash'),
 
 module.exports = function (pool, settings) {
 	this.pool = pool;
-	this.settings = settings;
+	this.settings = settings || {};
 	this.resources = (new Resources (this)).lock (this);
 };
 
