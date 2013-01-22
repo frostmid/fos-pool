@@ -31,7 +31,7 @@ _.extend (module.exports.prototype, {
 
 		(this.source = source)
 			.lock (this)
-			.once ('change', this.change);
+			.on ('change', this.change);
 	},
 
 	change: function () {
