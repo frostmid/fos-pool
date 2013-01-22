@@ -10,7 +10,7 @@ var _ = require ('lodash'),
 module.exports = function (pool, settings) {
 	this.pool = pool;
 	this.settings = settings;
-	this.resources = new Resources (this);
+	this.resources = (new Resources (this)).lock (this);
 };
 
 mixins (['ready', 'lock'], module.exports);
@@ -20,6 +20,9 @@ function getUserId (info) {
 }
 
 _.extend (module.exports.prototype, {
+	user: null,
+	resources: null,
+
 	fetch: function () {
 		return this.fetchSession ()
 			.then (getUserId)
@@ -47,7 +50,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	fetched: function (user) {
-		this.user = user;
+		this.user = user.lock (this);
 	},
 
 	sign: function (options) {
@@ -63,12 +66,14 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		return Q.all ([this.resources.release (this), this.user.release (this)])
-			.then (_.bind (function () {
-				delete this.resources;
-				delete this.user;
-				delete this.settings;
-				delete this.pool;
-			}, this));
+		return Q.all ([this.resources.release (this, true), this.user.release (this)])
+			.then (_.bind (this.cleanup, this));
+	},
+
+	cleanup: function () {
+		this.resources = null;
+		this.user = null;
+		this.settings = null;
+		this.pool = null;
 	}
 });

@@ -36,7 +36,7 @@ mixins (['lock'], module.exports);
 _.extend (module.exports.prototype, {
 	get: function (id) {
 		if (!this.has (id)) {
-			this.models [id] = new Resource (this, id);
+			this.models [id] = (new Resource (this, id)).lock (this);
 		}
 
 		return this.models [id].ready ();
@@ -44,6 +44,10 @@ _.extend (module.exports.prototype, {
 
 	has: function (id) {
 		return this.models [id] != undefined;
+	},
+
+	unset: function (id) {
+		delete this.models [id];
 	},
 
 	locate: function (id) {
@@ -167,9 +171,16 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		return Q.all (_.map (this.models, function (resource) {resource.release (this);}, this))
-			.then (function () {
-				console.log ('release resources');
-			});
+		var release = _.bind (function (resource) {
+			return resource.release (this, true);
+		}, this);
+
+		return Q.when (_.map (this.models, release))
+			.then (_.bind (this.cleanup, this));
+	},
+
+	cleanup: function () {
+		this.client = null;
+		this.models = null;
 	}
 });

@@ -26,8 +26,7 @@ _.extend (module.exports.prototype, {
 
 	fetched: function (source) {
 		if (this.source) {
-			console.log (this.source);
-			this.source.off ('change', this.change);
+			this.source.removeListener ('change', this.change);
 		}
 
 		(this.source = source)
@@ -78,13 +77,21 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
+		this.removeAllListeners ();
+		this.resources.unset (this.id);
+
 		if (this.source) {
-			this.source.removeListener ('change', this.change);
-			delete this.source;
+			this.source
+				.removeListener ('change', this.change)
+				.release (this);
 		}
 
-		this.removeAllListeners ();
+		this.cleanup ();
+	},
 
-		console.log ('release resource', this.id);
+	cleanup: function () {
+		this.source = null;
+		this.changes = null;
+		this.resources = null;
 	}
 });
