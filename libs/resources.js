@@ -99,6 +99,10 @@ _.extend (module.exports.prototype, {
 					resolved.limit = search.limit;
 				}
 
+				if (search.skip) {
+					resolved.skip = search.skip;
+				}
+
 				if (designDoc.data.defaultResolve) {
 					resolved = evaluate (designDoc.data.defaultResolve) (uri, resolved);
 				}
