@@ -51,15 +51,18 @@ _.extend (module.exports.prototype, {
 	},
 
 	locate: function (id) {
-		var pool = this.client.pool,
-			app = pool.findApp (id),
-			dbs;
+		var deferred = Q.defer (),
+			pool = this.client.pool,
+			app, dbs;
 
-		if (!app) throw NotFound;
+		if (app = pool.findApp (id)) {
+			this.selectDb (pool.getAppDbs (app))
+				.then (deferred.resolve, deferred.reject);
+		} else {
+			deferred.reject (NotFound);
+		}
 
-		dbs = pool.getAppDbs (app)
-
-		return this.selectDb (dbs);
+		return deferred.promise;
 	},
 
 	resolve: function (origin, id) {
