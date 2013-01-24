@@ -35,6 +35,8 @@ mixins (['lock'], module.exports);
 
 _.extend (module.exports.prototype, {
 	get: function (id) {
+		if (!id) return null;
+
 		if (!this.has (id)) {
 			this.models [id] = (new Resource (this, id)).lock (this);
 		}
@@ -47,7 +49,11 @@ _.extend (module.exports.prototype, {
 	},
 
 	unset: function (id) {
-		delete this.models [id];
+		if (this.models) {
+			delete this.models [id];
+		} else {
+			console.error ('TODO: this condition should not be required');
+		}
 	},
 
 	locate: function (id) {
@@ -103,6 +109,10 @@ _.extend (module.exports.prototype, {
 					resolved.skip = search.skip;
 				}
 
+				if (search.descending) {
+					resolved.descending = search.descending;
+				}
+
 				if (designDoc.data.defaultResolve) {
 					resolved = evaluate (designDoc.data.defaultResolve) (uri, resolved);
 				}
@@ -156,8 +166,8 @@ _.extend (module.exports.prototype, {
 			admins = security.admins,
 			client = this.client;
 
-		var name = client.user.get ('name'),
-			roles = client.user.get ('roles');
+		var name = client.name,
+			roles = client.roles;
 
 		// Empty readers fields means everybody is a reader
 		if (!readers || !readers.names || readers.names.length == 0) {
