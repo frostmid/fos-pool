@@ -8,6 +8,8 @@ var _ = require ('lodash'),
 
 
 module.exports = function (pool, settings) {
+	this.id = Date.now ();
+
 	this.pool = pool;
 	this.settings = settings || {};
 	this.resources = (new Resources (this)).lock (this);
@@ -55,6 +57,8 @@ _.extend (module.exports.prototype, {
 	fetched: function (user) {
 		this.user = user.lock (this);
 
+		// console.log ('@ lock', this.id, this.user.id);
+
 		this.name = user.get ('name');
 		this.roles = user.get ('roles');
 	},
@@ -72,8 +76,12 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		return Q.all ([this.resources.release (this), this.user.release (this)])
-			.then (_.bind (this.cleanup, this));
+		// console.log ('@ release', this.id, this.user.id);
+
+		this.user.release (this);
+		this.resources.release (this);
+
+		this.cleanup ();
 	},
 
 	cleanup: function () {

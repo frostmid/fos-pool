@@ -54,6 +54,8 @@ vows.describe ('fos-pool/general').addBatch ({
 						}
 					});
 
+					// client.lock (true)
+
 				Q.when (client)
 					.then (callback.success)
 					.fail (callback.error)
@@ -203,6 +205,24 @@ vows.describe ('fos-pool/general').addBatch ({
 						assert.equal (error.error, 'app_not_found');
 					}
 				}
+			},
+
+			'release': {
+				topic: function (client) {
+					var callback = _.bind (this.callback, this);
+
+					_.delay (function () {
+						client.release (true);
+
+						_.delay (function () {
+							callback (null, client);
+						}, 500);
+					}, 1500);
+				},
+
+				released: function (client) {
+					assert.isTrue (client.disposing);
+				}
 			}
 		},
 
@@ -227,6 +247,24 @@ vows.describe ('fos-pool/general').addBatch ({
 
 			'correct': function (client) {
 				assert.equal (client.user.get ('name'), 'nobody');
+			},
+
+			'release': {
+				topic: function (client) {
+					var callback = _.bind (this.callback, this);
+
+					_.delay (function () {
+						client.release (true);
+
+						_.delay (function () {
+							callback (null, client);
+						}, 500);
+					}, 1500);
+				},
+
+				released: function (client) {
+					assert.isTrue (client.disposing);
+				}
 			}
 		}
 	}

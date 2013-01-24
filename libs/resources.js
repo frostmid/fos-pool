@@ -27,6 +27,7 @@ var NotFound = {
 
 
 module.exports = function (client) {
+	this.id = 'resources ' + client.id;
 	this.client = client;
 	this.models = {};
 };
@@ -49,11 +50,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	unset: function (id) {
-		if (this.models) {
-			delete this.models [id];
-		} else {
-			console.error ('TODO: this condition should not be required');
-		}
+		delete this.models [id];
 	},
 
 	locate: function (id) {
@@ -89,7 +86,7 @@ _.extend (module.exports.prototype, {
 			.then (function (designDoc) {
 				var uri = require ('URIjs') (id),
 					search = uri.search (true),
-					type = _.first (_.keys (designDoc.data.views)),
+					type = _.first (_.keys (designDoc.get ('views'))),
 					resolved = {
 						design: ddocId,
 						view: type,
