@@ -23,6 +23,9 @@ _.extend (module.exports.prototype, {
 	user: null,
 	resources: null,
 
+	name: null,
+	roles: null,
+
 	fetch: function () {
 		return this.fetchSession ()
 			.then (getUserId)
@@ -51,6 +54,9 @@ _.extend (module.exports.prototype, {
 
 	fetched: function (user) {
 		this.user = user.lock (this);
+
+		this.name = user.get ('name');
+		this.roles = user.get ('roles');
 	},
 
 	sign: function (options) {
@@ -66,7 +72,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		return Q.all ([this.resources.release (this, true), this.user.release (this)])
+		return Q.all ([this.resources.release (this), this.user.release (this)])
 			.then (_.bind (this.cleanup, this));
 	},
 
