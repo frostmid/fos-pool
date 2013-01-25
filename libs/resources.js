@@ -109,11 +109,12 @@ _.extend (module.exports.prototype, {
 				}
 
 				if (designDoc.data.defaultResolve) {
-					resolved = evaluate (designDoc.data.defaultResolve) (uri, resolved);
+					resolved = evaluate (designDoc.data.defaultResolve, {_: _}) (uri, resolved);
+
 				}
 
 				if (designDoc.data.resolve) {
-					resolved = evaluate (designDoc.data.resolve) (uri, resolved);
+					resolved = evaluate (designDoc.data.resolve, {_: _}) (uri, resolved);
 				}
 
 				return resolved;
