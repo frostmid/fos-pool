@@ -16,45 +16,12 @@ _.extend (module.exports.prototype, {
 	source: null,
 	origin: null,
 
-	// _models: null,
-
 	fetch: function () {
 		return this.resources.locate (this.id)
 			.then (_.bind (function (origin) {
 				this.origin = origin;
 				return this.resources.resolve (origin, this.id);
 			}, this));
-	},
-
-	/*
-	prefetchModels: function () {
-		if (this._models && this._models.length) {
-			_.each (this._models, function (resource) {
-				resource.release (this);
-			}, this);
-			this._models = null;
-		}
-
-		
-		if (this.source.has ('rows')) {
-			var lock = _.bind (function (resource) {
-				return resource.lock (this);
-			}, this);
-
-			var fetch = _.bind (function (row) {
-				return Q.when (this.resources.get (row.id)).then (lock);
-			}, this);
-
-			return Q.all (_.map (this.source.get ('rows'), fetch, this))
-				.then (_.bind (function (resources) {
-					this._models = resources;
-				}, this));
-		}
-	},
-	*/
-
-	models: function () {
-		return this._models;
 	},
 
 	fetched: function (source) {
@@ -126,6 +93,10 @@ _.extend (module.exports.prototype, {
 
 	has: function (key) {
 		return this.source.data [key] != undefined;
+	},
+
+	json: function () {
+		return this.source.data;
 	},
 
 	cleanup: function () {

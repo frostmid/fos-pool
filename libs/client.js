@@ -76,8 +76,6 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		// console.log ('@ release', this.id, this.user.id);
-
 		this.user.release (this);
 		this.resources.release (this);
 
