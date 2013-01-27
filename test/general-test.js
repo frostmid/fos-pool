@@ -172,22 +172,6 @@ vows.describe ('fos-pool/general').addBatch ({
 
 					'has type': function (resource) {
 						assert.isTrue (/^urn:/.test (resource.get ('type')));
-					},
-
-					'models': {
-						topic: function (resource) {
-							this.callback (null, resource.models ())
-						},
-
-						'has models': function (models) {
-							assert.isNotNull (models);
-						},
-
-						'models contains resource': function (models) {
-							if (models) {
-								assert.equal (models.length, 1);
-							}
-						}
 					}
 				},
 
