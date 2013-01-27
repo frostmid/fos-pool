@@ -90,7 +90,7 @@ _.extend (module.exports.prototype, {
 					resolved = {
 						design: ddocId,
 						view: type,
-						// autoreduce: true
+						autoreduce: true,
 						reduce: false,
 						type: type
 					},

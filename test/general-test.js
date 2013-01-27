@@ -172,6 +172,13 @@ vows.describe ('fos-pool/general').addBatch ({
 
 					'has type': function (resource) {
 						assert.isTrue (/^urn:/.test (resource.get ('type')));
+					},
+
+					'has summary': function (resource) {
+						var summary = resource.get ('summary');
+						
+						assert.isNotNull (summary);
+						assert.isObject (summary);
 					}
 				},
 
