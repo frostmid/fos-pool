@@ -195,6 +195,27 @@ vows.describe ('fos-pool/general').addBatch ({
 					'not found': function (error) {
 						assert.equal (error.error, 'app_not_found');
 					}
+				},
+
+				'fulltext search': {
+					topic: function (client) {
+						var callback = wrap4promise (this.callback, this),
+							resource = client.resources.get ('urn:debug:test?search=test&skip=0');
+
+						Q.when (resource)
+							.then (callback.success, callback.success)
+							.done ();
+					},
+
+					'no error': function (resource) {
+						assert.isFalse (resource instanceof Error);
+						assert.isNull (resource.error);
+					},
+
+					'correct': function (resource) {
+						assert.isString (resource.get ('_id'));
+						assert.isString (resource.get ('_rev'));
+					}
 				}
 			},
 
