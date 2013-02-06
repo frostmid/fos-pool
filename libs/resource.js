@@ -96,7 +96,36 @@ _.extend (module.exports.prototype, {
 	},
 
 	json: function () {
-		return this.source.data;
+		if (this._prefetch) {
+			var _prefetch = {};
+
+			_.each (this._prefetch, function (value, index) {
+				var set = function (value) {
+					_prefetch [index] = value;
+				};
+
+				if (value) {
+					if (value instanceof this.constructor) {
+						set (value.json ());
+					} else {
+						set (
+							_.map (value, function (v) {
+								return v.json ();
+							})
+						);
+					}
+				} else {
+					set (null);
+				}
+				
+			}, this);
+
+			return _.extend ({
+				_prefetch: _prefetch
+			}, this.source.data);
+		} else {
+			return this.source.data;
+		}
 	},
 
 	cleanup: function () {
