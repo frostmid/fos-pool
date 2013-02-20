@@ -1,7 +1,7 @@
 var _ = require ('lodash'),
 	Q = require ('q'),
 
-	mixins = require ('fos-mixins');
+	mixin = require ('fos-mixin');
 
 
 module.exports = function (resources, id) {
@@ -10,7 +10,7 @@ module.exports = function (resources, id) {
 	this.change = _.bind (this.change, this);
 };
 
-mixins (['emitter', 'ready', 'lock'], module.exports);
+mixin (module.exports);
 
 _.extend (module.exports.prototype, {
 	source: null,
@@ -96,36 +96,9 @@ _.extend (module.exports.prototype, {
 	},
 
 	json: function () {
-		if (this._prefetch) {
-			var _prefetch = {};
-
-			_.each (this._prefetch, function (value, index) {
-				var set = function (value) {
-					_prefetch [index] = value;
-				};
-
-				if (value) {
-					if (value instanceof this.constructor) {
-						set (value.json ());
-					} else {
-						set (
-							_.map (value, function (v) {
-								return v.json ();
-							})
-						);
-					}
-				} else {
-					set (null);
-				}
-				
-			}, this);
-
-			return _.extend ({
-				_prefetch: _prefetch
-			}, this.source.data);
-		} else {
-			return this.source.data;
-		}
+		return _.extend ({
+			_id: this.id
+		}, this.source.data);
 	},
 
 	cleanup: function () {

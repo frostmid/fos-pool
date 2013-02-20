@@ -12,7 +12,7 @@
 		"lodash": "0.10.x",
 		"q": "0.8.x",
 		"URIjs": "1.8.x",
-		"fos-mixins": "git://github.com/lyxsus/fos-mixins.git",
+		"fos-mixin": "git://github.com/lyxsus/fos-mixin.git",
 		"fos-request": "git://github.com/lyxsus/fos-request.git",
 		"fos-couch": "git://github.com/lyxsus/fos-couch.git",
 		"fos-evaluate": "git://github.com/lyxsus/fos-evaluate.git"

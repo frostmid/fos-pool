@@ -2,7 +2,7 @@ var _ = require ('lodash'),
 	Q = require ('q'),
 
 	Resource = require ('./resource'),
-	mixins = require ('fos-mixins');
+	mixin = require ('fos-mixin');
 
 function isApp (urn) {
 	return urn.indexOf ('/') === -1;
@@ -32,7 +32,7 @@ module.exports = function (client) {
 	this.models = {};
 };
 
-mixins (['lock'], module.exports);
+mixin (module.exports);
 
 _.extend (module.exports.prototype, {
 	get: function (id) {
@@ -50,6 +50,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	unset: function (id) {
+		if (this.models)
 		delete this.models [id];
 	},
 
@@ -110,7 +111,6 @@ _.extend (module.exports.prototype, {
 
 				if (designDoc.data.defaultResolve) {
 					resolved = evaluate (designDoc.data.defaultResolve, {_: _}) (uri, resolved);
-
 				}
 
 				if (designDoc.data.resolve) {

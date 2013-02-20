@@ -1,7 +1,7 @@
 var Q = require ('q'),
 	_ = require ('lodash'),
 
-	mixins = require ('fos-mixins'),
+	mixin = require ('fos-mixin'),
 	Server = require ('fos-couch'),
 
 	Client = require ('./client');
@@ -16,7 +16,7 @@ module.exports = function (options) {
 	// this.models.get (origin, id/resolved, some other shit)
 };
 
-mixins (['ready'], module.exports);
+mixin (module.exports);
 
 _.extend (module.exports.prototype, {
 	appIndex: null,
@@ -98,6 +98,12 @@ _.extend (module.exports.prototype, {
 	},
 
 	findApp: function (urn) {
+		if (!this.appNames) {
+			throw new Error ('apps index was not loaded');
+		}
+
+		if (typeof urn != 'string') return false;
+
 		var prefix = urn.split (/[\/\?]/) [0];
 		return (this.appNames.indexOf (prefix) != -1) ? prefix : false;
 	},

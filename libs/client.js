@@ -1,7 +1,7 @@
 var _ = require ('lodash'),
 	Q = require ('q'),
 
-	mixins = require ('fos-mixins'),
+	mixin = require ('fos-mixin'),
 	request = require ('fos-request'),
 
 	Resources = require ('./resources');
@@ -15,7 +15,7 @@ module.exports = function (pool, settings) {
 	this.resources = (new Resources (this)).lock (this);
 };
 
-mixins (['ready', 'lock'], module.exports);
+mixin (module.exports);
 
 function getUserId (info) {
 	return 'org.couchdb.user:' + (info.name || 'nobody');
