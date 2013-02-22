@@ -45,6 +45,27 @@ _.extend (module.exports.prototype, {
 		return this.models [id].ready ();
 	},
 
+	create: function (data) {
+		var pool = this.client.pool,
+			self = this,
+			app;
+
+		return Q.when (this.locateType (data.type))
+			.then (function () {
+				app = arguments [0];
+				return self.selectDb (pool.getAppDbs (app));
+			})
+			.then (function (db) {
+				return pool.server.database (db);
+			})
+			.then (function (database) {
+				return database.documents.create (app, data);
+			})
+			.then (function (document) {
+				return self.get (document.id);
+			})
+	},
+
 	has: function (id) {
 		return this.models [id] != undefined;
 	},
@@ -60,6 +81,19 @@ _.extend (module.exports.prototype, {
 
 		if (app = pool.findApp (id)) {
 			return this.selectDb (pool.getAppDbs (app));
+		} else {
+			var deferred = Q.defer ();
+			deferred.reject (NotFound);
+			return deferred.promise;
+		}
+	},
+
+	locateType: function (type) {
+		var pool = this.client.pool,
+			app, dbs;
+
+		if (app = pool.findAppByType (type)) {
+			return app;
 		} else {
 			var deferred = Q.defer ();
 			deferred.reject (NotFound);

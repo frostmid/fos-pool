@@ -108,6 +108,22 @@ _.extend (module.exports.prototype, {
 		return (this.appNames.indexOf (prefix) != -1) ? prefix : false;
 	},
 
+	findAppByType: function (type) {
+		var index = this.appIndex;
+
+		if (!index) {
+			throw new Error ('apps index was not loaded');
+		}
+
+		if (typeof type != 'string') return false;
+
+		for (var app in index) {
+			if (index [app].types.indexOf (type) !== -1) {
+				return app;
+			}
+		}
+	},
+
 	getAppDbs: function (app) {
 		return this.appIndex [app].dbs;
 	}
