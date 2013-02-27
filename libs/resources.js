@@ -143,6 +143,10 @@ _.extend (module.exports.prototype, {
 					resolved.descending = search.descending;
 				}
 
+				if (search.include_docs == 'true') {
+					resolved.include_docs = true;
+				}
+
 				if (designDoc.data.defaultResolve) {
 					resolved = evaluate (designDoc.data.defaultResolve, {_: _}) (uri, resolved);
 				}
