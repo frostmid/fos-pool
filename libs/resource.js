@@ -105,7 +105,8 @@ _.extend (module.exports.prototype, {
 		}
 
 		if (this._prefetch) {
-			var prefetch = {}
+			var prefetch = [];
+			
 			_.each (this._prefetch, function (value, index) {
 				if (!value) return;
 

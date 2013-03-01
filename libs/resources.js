@@ -29,7 +29,7 @@ var NotFound = {
 module.exports = function (client) {
 	this.id = 'resources ' + client.id;
 	this.client = client;
-	this.models = {};
+	this.models = [];
 };
 
 mixin (module.exports);

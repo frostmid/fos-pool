@@ -73,7 +73,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	fetched: function (applications) {
-		var appIndex = {};
+		var appIndex = [];
 			
 		_.each (applications.get ('rows'), function (row) {
 			appIndex [row.value.id] = {
