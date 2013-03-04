@@ -2,17 +2,20 @@ var _ = require ('lodash'),
 	Q = require ('q'),
 
 	mixin = require ('fos-mixin'),
-	request = require ('fos-request'),
-
-	Resources = require ('./resources');
+	request = require ('fos-request');
 
 
-module.exports = function (pool, settings) {
-	this.id = Date.now ();
+module.exports = function Client (pool, settings) {
+	this.id = 'client #' + Date.now ();
 
 	this.pool = pool;
 	this.settings = settings || {};
-	this.resources = (new Resources (this)).lock (this);
+	
+	this.resources = {
+		get: _.bind (this.get, this),
+		create: function () {},
+		update: function () {}
+	};
 };
 
 mixin (module.exports);
@@ -22,8 +25,10 @@ function getUserId (info) {
 }
 
 _.extend (module.exports.prototype, {
+	tag: 'client',
+
+	
 	user: null,
-	resources: null,
 
 	name: null,
 	roles: null,
@@ -77,7 +82,9 @@ _.extend (module.exports.prototype, {
 
 	dispose: function () {
 		this.user.release (this);
-		this.resources.release (this);
+		// this.resources.release (this);
+
+		// TODO: Release locked resources
 
 		this.cleanup ();
 	},
@@ -87,5 +94,9 @@ _.extend (module.exports.prototype, {
 		this.user = null;
 		this.settings = null;
 		this.pool = null;
+	},
+
+	get: function (id) {
+		return this.pool.resources.get (this, id);
 	}
 });

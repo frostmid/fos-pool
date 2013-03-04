@@ -4,21 +4,22 @@ var Q = require ('q'),
 	mixin = require ('fos-mixin'),
 	Server = require ('fos-couch'),
 
-	Client = require ('./client');
+	Client = require ('./client'),
+	Resources = require ('./resources');
 
 
 module.exports = function (options) {
 	this.id = 'pool #' + Date.now ();
 	this.options = options;
-	this.server = new Server (options.server);
-	// TODO:
-	// this.models = new Models (this);
-	// this.models.get (origin, id/resolved, some other shit)
+	this.server = (new Server (options.server)).lock (true);
+	this.resources = (new Resources (this)).lock (true);
 };
 
 mixin (module.exports);
 
 _.extend (module.exports.prototype, {
+	tag: 'pool',
+	
 	appIndex: null,
 	appNames: null,
 

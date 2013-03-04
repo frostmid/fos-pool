@@ -1,27 +1,23 @@
-var _ = require ('lodash'),
+var	_ = require ('lodash'),
 	Q = require ('q'),
 
 	mixin = require ('fos-mixin');
 
-
-module.exports = function (resources, id) {
+module.exports = function Resource (resources, origin, id) {
 	this.resources = resources;
+	this.origin = origin;
 	this.id = id;
+
 	this.change = _.bind (this.change, this);
 };
 
 mixin (module.exports);
 
 _.extend (module.exports.prototype, {
-	source: null,
-	origin: null,
+	tag: 'resource',
 
 	fetch: function () {
-		return this.resources.locate (this.id)
-			.then (_.bind (function (origin) {
-				this.origin = origin;
-				return this.resources.resolve (origin, this.id);
-			}, this));
+		return this.resources.resolve (this.origin, this.id);
 	},
 
 	fetched: function (source) {
@@ -65,7 +61,8 @@ _.extend (module.exports.prototype, {
 			this.set (data);
 		}
 
-		return this.source.save (this.origin);
+		return this.source.save (this.origin)
+			.then (this.isReady)
 	},
 
 	remove: function () {
@@ -77,7 +74,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		this.resources.unset (this.id);
+		this.resources.unset (this);
 		this.removeAllListeners ();
 
 		if (this.source) {
@@ -87,8 +84,6 @@ _.extend (module.exports.prototype, {
 		}
 
 		this.cleanup ();
-
-		// console.log ('#dispose resource', this.id);
 	},
 
 	has: function (key) {

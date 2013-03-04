@@ -54,8 +54,6 @@ vows.describe ('fos-pool/general').addBatch ({
 						}
 					});
 
-					// client.lock (true)
-
 				Q.when (client)
 					.then (callback.success)
 					.fail (callback.error)
