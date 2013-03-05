@@ -125,6 +125,46 @@ _.extend (module.exports.prototype, {
 		}
 	},
 
+	selectDb: function (client, dbs) {
+		if (!dbs.length) return null;
+
+		var dbs = dbs.slice (0),
+			db = dbs.shift ();
+
+		if (/^roles\//.test (db)) {
+			db = this.client.user.get ('database');
+		}
+
+		return db;
+	},
+
+	locate: function (client, id) {
+		var app, dbs;
+
+		if (app = this.findApp (id)) {
+			return this.selectDb (client, this.getAppDbs (app));
+		} else {
+			console.error ('not found application', id);
+			throw {
+				error: 'app_not_found',
+				reason: 'missing',
+				id: id
+			};
+		}
+	},
+
+	locateType: function (type) {
+		var app, dbs;
+
+		if (app = this.findAppByType (type)) {
+			return app;
+		} else {
+			var deferred = Q.defer ();
+			deferred.reject (NotFound);
+			return deferred.promise;
+		}
+	},
+
 	getAppDbs: function (app) {
 		return this.appIndex [app].dbs;
 	}

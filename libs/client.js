@@ -11,10 +11,10 @@ module.exports = function Client (pool, settings) {
 	this.pool = pool;
 	this.settings = settings || {};
 	
+	// TODO: Remove old api callbacks
 	this.resources = {
 		get: _.bind (this.get, this),
-		create: function () {},
-		update: function () {}
+		create: _.bind (this.create, this)
 	};
 };
 
@@ -82,10 +82,6 @@ _.extend (module.exports.prototype, {
 
 	dispose: function () {
 		this.user.release (this);
-		// this.resources.release (this);
-
-		// TODO: Release locked resources
-
 		this.cleanup ();
 	},
 
@@ -98,5 +94,26 @@ _.extend (module.exports.prototype, {
 
 	get: function (id) {
 		return this.pool.resources.get (this, id);
+	},
+
+	create: function (data) {
+		var pool = this.pool,
+			self = this,
+			app;
+
+		return Q.when (pool.locateType (data.type))
+			.then (function () {
+				app = arguments [0];
+				return pool.selectDb (this, pool.getAppDbs (app));
+			})
+			.then (function (db) {
+				return pool.server.database (db);
+			})
+			.then (function (database) {
+				return database.documents.create (app, data);
+			})
+			.then (function (document) {
+				return self.get (document.id);
+			});
 	}
 });

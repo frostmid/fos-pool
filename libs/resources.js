@@ -39,7 +39,7 @@ _.extend (module.exports.prototype, {
 		if (!id) return false; // throw new Error ('Resource id could not be empty');
 		if (typeof id != 'string') return false; // throw new Error ('Resource id must be a string', typeof id, 'given');
 
-		var db = this.locate (client, id),
+		var db = this.pool.locate (client, id),
 			key = db + ',' + id,
 			resource = this.resources [key];
 
@@ -59,35 +59,6 @@ _.extend (module.exports.prototype, {
 		if (resources && resources [key] !== undefined) {
 			delete resources [key];
 		}
-	},
-
-	locate: function (client, id) {
-		var pool = this.pool,
-			app, dbs;
-
-		if (app = pool.findApp (id)) {
-			return this.selectDb (client, pool.getAppDbs (app));
-		} else {
-			console.error ('not found application', id);
-			throw {
-				error: 'app_not_found',
-				reason: 'missing',
-				id: id
-			};
-		}
-	},
-
-	selectDb: function (client, dbs) {
-		if (!dbs.length) return null;
-
-		var dbs = dbs.slice (0),
-			db = dbs.shift ();
-
-		if (/^roles\//.test (db)) {
-			db = this.client.user.get ('database');
-		}
-
-		return db;
 	},
 
 	resolve: function (origin, id) {
