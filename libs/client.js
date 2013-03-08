@@ -16,6 +16,8 @@ module.exports = function Client (pool, settings) {
 		get: _.bind (this.get, this),
 		create: _.bind (this.create, this)
 	};
+
+	this.cache = [];
 };
 
 mixin (module.exports);
@@ -32,6 +34,7 @@ _.extend (module.exports.prototype, {
 
 	name: null,
 	roles: null,
+	cache: null,
 
 	fetch: function () {
 		return this.fetchSession ()
@@ -90,10 +93,20 @@ _.extend (module.exports.prototype, {
 		this.user = null;
 		this.settings = null;
 		this.pool = null;
+		this.cache = null;
 	},
 
 	get: function (id) {
 		return this.pool.resources.get (this, id);
+
+		/*
+		// This makes getting resources blazing fast
+		if (this.cache [id]) {
+			return this.cache [id];
+		}
+
+		return this.cache [id] = this.pool.resources.get (this, id);
+		*/
 	},
 
 	create: function (data) {

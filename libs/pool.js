@@ -22,6 +22,7 @@ _.extend (module.exports.prototype, {
 	
 	appIndex: null,
 	appNames: null,
+	appRoutes: null,	// TODO: Review this implementation
 
 	settings: {
 		appDbPrefix: 'app/',
@@ -60,6 +61,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	buildIndex: function () {
+		// TODO: Rebuild index on view update
 		return Q.when (this.server.database ('sys/apps'))
 			.then (function (database) {
 				return database.views.get ('urn:applications', 'all');
@@ -85,13 +87,23 @@ _.extend (module.exports.prototype, {
 
 		this.appIndex = appIndex;
 
-		this.appNames = _.sortBy (
-			_.keys (appIndex),
+		// this.appNames = _.sortBy (
+		// 	_.keys (appIndex),
 
-			function (name) {
-				return name.length;
-			}
-		);
+		// 	function (name) {
+		// 		return name.length;
+		// 	}
+		// );
+		this.appNames = _.keys (appIndex);
+
+		///
+		var appRoutes = {};
+		_.each (this.appNames, function (urn) {
+			var url = '/' + urn.substring (4).replace (/:/g, '/');
+			appRoutes [url] = urn;
+		});
+		this.appRoutes = appRoutes;
+		///
 
 		applications.once ('change', _.bind (function () {
 			this.update (applications);
@@ -132,7 +144,7 @@ _.extend (module.exports.prototype, {
 			db = dbs.shift ();
 
 		if (/^roles\//.test (db)) {
-			db = this.client.user.get ('database');
+			db = client.user.get ('database');
 		}
 
 		return db;
