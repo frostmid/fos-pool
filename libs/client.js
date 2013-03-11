@@ -99,14 +99,14 @@ _.extend (module.exports.prototype, {
 	get: function (id) {
 		return this.pool.resources.get (this, id);
 
-		/*
-		// This makes getting resources blazing fast
-		if (this.cache [id]) {
-			return this.cache [id];
-		}
+		
+		// // This makes getting resources blazing fast
+		// if (this.cache [id]) {
+		// 	return this.cache [id];
+		// }
 
-		return this.cache [id] = this.pool.resources.get (this, id);
-		*/
+		// return this.cache [id] = this.pool.resources.get (this, id);
+		
 	},
 
 	create: function (data) {

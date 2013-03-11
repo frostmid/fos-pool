@@ -7,6 +7,7 @@ var Q = require ('q'),
 	Client = require ('./client'),
 	Resources = require ('./resources');
 
+Q.longStackJumpLimit = 0;
 
 module.exports = function (options) {
 	this.id = 'pool #' + Date.now ();
