@@ -2,17 +2,22 @@ var _ = require ('lodash'),
 	Q = require ('q'),
 
 	mixin = require ('fos-mixin'),
-	request = require ('fos-request'),
-
-	Resources = require ('./resources');
+	request = require ('fos-request');
 
 
-module.exports = function (pool, settings) {
-	this.id = Date.now ();
+module.exports = function Client (pool, settings) {
+	this.id = 'client #' + Date.now ();
 
 	this.pool = pool;
 	this.settings = settings || {};
-	this.resources = (new Resources (this)).lock (this);
+	
+	// TODO: Remove old api callbacks
+	this.resources = {
+		get: _.bind (this.get, this),
+		create: _.bind (this.create, this)
+	};
+
+	this.cache = [];
 };
 
 mixin (module.exports);
@@ -22,11 +27,14 @@ function getUserId (info) {
 }
 
 _.extend (module.exports.prototype, {
+	tag: 'client',
+
+	
 	user: null,
-	resources: null,
 
 	name: null,
 	roles: null,
+	cache: null,
 
 	fetch: function () {
 		return this.fetchSession ()
@@ -77,8 +85,6 @@ _.extend (module.exports.prototype, {
 
 	dispose: function () {
 		this.user.release (this);
-		this.resources.release (this);
-
 		this.cleanup ();
 	},
 
@@ -87,5 +93,40 @@ _.extend (module.exports.prototype, {
 		this.user = null;
 		this.settings = null;
 		this.pool = null;
+		this.cache = null;
+	},
+
+	get: function (id) {
+		return this.pool.resources.get (this, id);
+
+		
+		// // This makes getting resources blazing fast
+		// if (this.cache [id]) {
+		// 	return this.cache [id];
+		// }
+
+		// return this.cache [id] = this.pool.resources.get (this, id);
+		
+	},
+
+	create: function (data) {
+		var pool = this.pool,
+			self = this,
+			app;
+
+		return Q.when (pool.locateType (data.type))
+			.then (function () {
+				app = arguments [0];
+				return pool.selectDb (this, pool.getAppDbs (app));
+			})
+			.then (function (db) {
+				return pool.server.database (db);
+			})
+			.then (function (database) {
+				return database.documents.create (app, data);
+			})
+			.then (function (document) {
+				return self.get (document.id);
+			});
 	}
 });

@@ -4,23 +4,26 @@ var Q = require ('q'),
 	mixin = require ('fos-mixin'),
 	Server = require ('fos-couch'),
 
-	Client = require ('./client');
+	Client = require ('./client'),
+	Resources = require ('./resources');
 
+Q.longStackJumpLimit = 0;
 
 module.exports = function (options) {
 	this.id = 'pool #' + Date.now ();
 	this.options = options;
-	this.server = new Server (options.server);
-	// TODO:
-	// this.models = new Models (this);
-	// this.models.get (origin, id/resolved, some other shit)
+	this.server = (new Server (options.server)).lock (true);
+	this.resources = (new Resources (this)).lock (true);
 };
 
 mixin (module.exports);
 
 _.extend (module.exports.prototype, {
+	tag: 'pool',
+	
 	appIndex: null,
 	appNames: null,
+	appRoutes: null,	// TODO: Review this implementation
 
 	settings: {
 		appDbPrefix: 'app/',
@@ -59,6 +62,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	buildIndex: function () {
+		// TODO: Rebuild index on view update
 		return Q.when (this.server.database ('sys/apps'))
 			.then (function (database) {
 				return database.views.get ('urn:applications', 'all');
@@ -73,7 +77,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	fetched: function (applications) {
-		var appIndex = {};
+		var appIndex = [];
 			
 		_.each (applications.get ('rows'), function (row) {
 			appIndex [row.value.id] = {
@@ -84,13 +88,23 @@ _.extend (module.exports.prototype, {
 
 		this.appIndex = appIndex;
 
-		this.appNames = _.sortBy (
-			_.keys (appIndex),
+		// this.appNames = _.sortBy (
+		// 	_.keys (appIndex),
 
-			function (name) {
-				return name.length;
-			}
-		);
+		// 	function (name) {
+		// 		return name.length;
+		// 	}
+		// );
+		this.appNames = _.keys (appIndex);
+
+		///
+		var appRoutes = {};
+		_.each (this.appNames, function (urn) {
+			var url = '/' + urn.substring (4).replace (/:/g, '/');
+			appRoutes [url] = urn;
+		});
+		this.appRoutes = appRoutes;
+		///
 
 		applications.once ('change', _.bind (function () {
 			this.update (applications);
@@ -121,6 +135,46 @@ _.extend (module.exports.prototype, {
 			if (index [app].types.indexOf (type) !== -1) {
 				return app;
 			}
+		}
+	},
+
+	selectDb: function (client, dbs) {
+		if (!dbs.length) return null;
+
+		var dbs = dbs.slice (0),
+			db = dbs.shift ();
+
+		if (/^roles\//.test (db)) {
+			db = client.user.get ('database');
+		}
+
+		return db;
+	},
+
+	locate: function (client, id) {
+		var app, dbs;
+
+		if (app = this.findApp (id)) {
+			return this.selectDb (client, this.getAppDbs (app));
+		} else {
+			console.error ('not found application', id);
+			throw {
+				error: 'app_not_found',
+				reason: 'missing',
+				id: id
+			};
+		}
+	},
+
+	locateType: function (type) {
+		var app, dbs;
+
+		if (app = this.findAppByType (type)) {
+			return app;
+		} else {
+			var deferred = Q.defer ();
+			deferred.reject (NotFound);
+			return deferred.promise;
 		}
 	},
 
