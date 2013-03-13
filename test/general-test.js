@@ -23,6 +23,10 @@ var settings = {
 		auth: {
 			username: 'lyxsus@gmail.com',
 			password: 'letmein'
+		},
+
+		notifications: {
+			port: 5983
 		}
 	}
 };
@@ -268,8 +272,8 @@ vows.describe ('fos-pool/general').addBatch ({
 
 						_.delay (function () {
 							callback (null, client);
-						}, 500);
-					}, 1500);
+						}, 100);
+					}, 100);
 				},
 
 				released: function (client) {
