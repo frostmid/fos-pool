@@ -157,12 +157,7 @@ _.extend (module.exports.prototype, {
 		if (app = this.findApp (id)) {
 			return this.selectDb (client, this.getAppDbs (app));
 		} else {
-			console.error ('not found application', id);
-			throw {
-				error: 'app_not_found',
-				reason: 'missing',
-				id: id
-			};
+			return false;
 		}
 	},
 

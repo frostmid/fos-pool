@@ -43,6 +43,16 @@ _.extend (module.exports.prototype, {
 			key = db + ',' + id,
 			resource = this.resources [key];
 
+		if (!db) {
+			var deferred = Q.defer ();
+			deferred.reject ({
+				error: 'not_found',
+				reason: 'origin not found',
+				id: id
+			});
+			return deferred.promise;
+		}
+
 		if (resource === undefined) {
 			this.resources [key] = resource = new Resource (this, db, id);
 		}
