@@ -168,7 +168,10 @@ _.extend (module.exports.prototype, {
 			return app;
 		} else {
 			var deferred = Q.defer ();
-			deferred.reject (NotFound);
+			deferred.reject ({
+				error: 'not_found',
+				reason: 'missing'
+			});
 			return deferred.promise;
 		}
 	},
