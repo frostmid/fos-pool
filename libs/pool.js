@@ -19,8 +19,6 @@ module.exports = function (options) {
 mixin (module.exports);
 
 _.extend (module.exports.prototype, {
-	tag: 'pool',
-	
 	appIndex: null,
 	appNames: null,
 	appRoutes: null,	// TODO: Review this implementation

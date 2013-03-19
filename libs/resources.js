@@ -31,8 +31,6 @@ module.exports = function Resources (pool) {
 mixin (module.exports);
 
 _.extend (module.exports.prototype, {
-	tag: 'resources',
-	
 	pool: null, resources: null,
 
 	get: function (client, id) {

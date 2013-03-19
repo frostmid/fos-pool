@@ -9,9 +9,9 @@
 	"version": "0.1.1",
 	"main": "index.js",
 	"dependencies": {
-		"lodash": "0.10.x",
-		"q": "0.8.x",
-		"URIjs": "1.8.x",
+		"lodash": "*",
+		"q": "*",
+		"URIjs": "*",
 		"fos-mixin": "git://github.com/lyxsus/fos-mixin.git",
 		"fos-request": "git://github.com/lyxsus/fos-request.git",
 		"fos-couch": "git://github.com/lyxsus/fos-couch.git",

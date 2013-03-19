@@ -14,7 +14,9 @@ module.exports = function Resource (resources, origin, id) {
 mixin (module.exports);
 
 _.extend (module.exports.prototype, {
-	tag: 'resource',
+	source: null,
+
+	disposeDelay: 1000 * 30,
 
 	fetch: function () {
 		return this.resources.resolve (this.origin, this.id);
@@ -31,7 +33,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	change: function () {
-		this.emit ('change');
+		this.emit ('change', this);
 	},
 
 	get: function (key) {

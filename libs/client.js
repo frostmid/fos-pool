@@ -27,9 +27,6 @@ function getUserId (info) {
 }
 
 _.extend (module.exports.prototype, {
-	tag: 'client',
-
-	
 	user: null,
 
 	name: null,
