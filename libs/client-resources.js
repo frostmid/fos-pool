@@ -1,4 +1,5 @@
-var	_ = require ('lodash');
+var	_ = require ('lodash'),
+	Q = require ('q');
 
 module.exports = function (client) {
 	this.client = client;
@@ -43,9 +44,16 @@ _.extend (module.exports.prototype, {
 
 	release: function (id) {
 		if (this.has (id)) {
+			// todo: beautify that
 			var resource = this.cache [id];
+			
 			delete this.cache [id];
-			resource.release (this.client);
+
+			Q.when (resource)
+				.then (function (resource) {
+					resource.release (this.client);
+				})
+				.done ();
 		}
 	},
 	

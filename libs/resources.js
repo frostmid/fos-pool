@@ -45,8 +45,7 @@ _.extend (module.exports.prototype, {
 			var deferred = Q.defer ();
 			deferred.reject ({
 				error: 'not_found',
-				reason: 'origin not found',
-				id: id
+				reason: 'missing_origin'
 			});
 			return deferred.promise;
 		}

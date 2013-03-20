@@ -195,7 +195,7 @@ vows.describe ('fos-pool/general').addBatch ({
 					},
 
 					'not found': function (error) {
-						assert.equal (error.error, 'app_not_found');
+						assert.equal (error.error, 'not_found');
 					}
 				},
 
@@ -226,6 +226,7 @@ vows.describe ('fos-pool/general').addBatch ({
 					var callback = _.bind (this.callback, this);
 
 					_.delay (function () {
+						client.disposeDelay = 0;
 						client.release (true);
 
 						_.delay (function () {
@@ -268,6 +269,7 @@ vows.describe ('fos-pool/general').addBatch ({
 					var callback = _.bind (this.callback, this);
 
 					_.delay (function () {
+						client.disposeDelay = 0;
 						client.release (true);
 
 						_.delay (function () {
