@@ -43,14 +43,19 @@ _.extend (module.exports.prototype, {
 
 	release: function (id) {
 		if (this.has (id)) {
-			this.cache [id].release (this.client);
+			var resource = this.cache [id];
 			delete this.cache [id];
+			resource.release (this.client);
 		}
 	},
 	
 	
 	list: function () {
 		return this.cache;
+	},
+
+	ids: function () {
+		return _.keys (this.cache);
 	},
 
 	dispose: function () {
