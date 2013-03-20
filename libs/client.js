@@ -2,7 +2,9 @@ var _ = require ('lodash'),
 	Q = require ('q'),
 
 	mixin = require ('fos-mixin'),
-	request = require ('fos-request');
+	request = require ('fos-request'),
+
+	ClientResources = require ('./client-resources.js');
 
 
 module.exports = function Client (pool, settings) {
@@ -11,13 +13,7 @@ module.exports = function Client (pool, settings) {
 	this.pool = pool;
 	this.settings = settings || {};
 	
-	// TODO: Remove old api callbacks
-	this.resources = {
-		get: _.bind (this.get, this),
-		create: _.bind (this.create, this)
-	};
-
-	this.cache = [];
+	this.resources = new ClientResources (this);
 };
 
 mixin (module.exports);
@@ -31,7 +27,6 @@ _.extend (module.exports.prototype, {
 
 	name: null,
 	roles: null,
-	cache: null,
 
 	fetch: function () {
 		return this.fetchSession ()
@@ -62,8 +57,6 @@ _.extend (module.exports.prototype, {
 	fetched: function (user) {
 		this.user = user.lock (this);
 
-		// console.log ('@ lock', this.id, this.user.id);
-
 		this.name = user.get ('name');
 		this.roles = user.get ('roles');
 	},
@@ -82,6 +75,7 @@ _.extend (module.exports.prototype, {
 
 	dispose: function () {
 		this.user.release (this);
+		this.resources.dispose ();
 		this.cleanup ();
 	},
 
@@ -90,40 +84,9 @@ _.extend (module.exports.prototype, {
 		this.user = null;
 		this.settings = null;
 		this.pool = null;
-		this.cache = null;
 	},
 
-	get: function (id) {
-		return this.pool.resources.get (this, id);
-
-		
-		// // This makes getting resources blazing fast
-		// if (this.cache [id]) {
-		// 	return this.cache [id];
-		// }
-
-		// return this.cache [id] = this.pool.resources.get (this, id);
-		
-	},
-
-	create: function (data) {
-		var pool = this.pool,
-			self = this,
-			app;
-
-		return Q.when (pool.locateType (data.type))
-			.then (function () {
-				app = arguments [0];
-				return pool.selectDb (this, pool.getAppDbs (app));
-			})
-			.then (function (db) {
-				return pool.server.database (db);
-			})
-			.then (function (database) {
-				return database.documents.create (app, data);
-			})
-			.then (function (document) {
-				return self.get (document.id);
-			});
+	get: function () {
+		throw new Error ('who are you to call me?')
 	}
 });
