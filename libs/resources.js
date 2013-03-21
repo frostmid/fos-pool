@@ -122,6 +122,8 @@ _.extend (module.exports.prototype, {
 					resolved = evaluate (designDoc.data.resolve, {_: _}) (uri, resolved);
 				}
 
+				resolved.options = search;
+
 				return resolved;
 			})
 			.then (function (resolved) {
