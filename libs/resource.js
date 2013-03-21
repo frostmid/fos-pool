@@ -58,17 +58,15 @@ _.extend (module.exports.prototype, {
 		_.extend (this.source.data, data);
 	},
 
-	save: function (data) {
+	save: function (data, sign) {
 		if (data) {
 			this.set (data);
 		}
 
-		return this.source.save (this.origin)
-			.then (this.isReady)
-	},
-
-	remove: function () {
-		return this.source.remove (this.origin);
+		return this.source.save (this.id.split ('/') [0], sign)
+			.fail (_.bind (this.returnError, this))
+			.then (_.bind (this.returnNotReady, this))
+			.then (_.bind (this.ready, this));
 	},
 
 	stringify: function () {

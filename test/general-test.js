@@ -17,13 +17,18 @@ function wrap4promise (callback, ctx) {
 	};
 }
 
+var signature = {
+	auth: {
+		username: 'lyxsus@gmail.com',
+		password: 'letmein'
+	}
+};
+
 var settings = {
 	server: {
 		host: '89.179.119.16',
-		auth: {
-			username: 'lyxsus@gmail.com',
-			password: 'letmein'
-		},
+		
+		auth: signature.auth,
 
 		notifications: {
 			port: 5983
@@ -51,12 +56,7 @@ vows.describe ('fos-pool/general').addBatch ({
 		'client': {
 			topic: function (pool) {
 				var callback = wrap4promise (this.callback, this),
-					client = pool.client ({
-						auth: {
-							username: 'lyxsus@gmail.com',
-							password: 'letmein'
-						}
-					});
+					client = pool.client (signature);
 
 				Q.when (client)
 					.then (callback.success)
@@ -108,17 +108,19 @@ vows.describe ('fos-pool/general').addBatch ({
 
 							Q.when (resource.save ({
 								title: newTitle
-							}))
+							}, signature))
 								.then (callback.success)
 								.fail (callback.error)
 								.done ();
 						},
 
 						'no errors': function (resource) {
+							assert.isObject (resource);
 							assert.isNull (resource.error);
 						},
 
 						'ready': function (resource) {
+							assert.isObject (resource);
 							assert.isTrue (resource.isReady);
 						}
 					}

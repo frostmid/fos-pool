@@ -31,7 +31,7 @@ _.extend (module.exports.prototype, {
 				return pool.server.database (db);
 			})
 			.then (function (database) {
-				return database.documents.create (app, data);
+				return database.documents.create (app, data, client.settings);
 			})
 			.then (function (document) {
 				return self.get (document.id);
