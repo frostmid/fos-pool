@@ -3,7 +3,7 @@ var	_ = require ('lodash'),
 
 	mixin = require ('fos-mixin');
 
-module.exports = function Resource (resources, origin, id) {
+module.exports = function PoolResource (resources, origin, id) {
 	this.resources = resources;
 	this.origin = origin;
 	this.id = id;
@@ -69,10 +69,6 @@ _.extend (module.exports.prototype, {
 			.then (_.bind (this.ready, this));
 	},
 
-	stringify: function () {
-		return JSON.stringify (this.source.data);
-	},
-
 	dispose: function () {
 		this.resources.unset (this);
 		this.removeAllListeners ();
@@ -88,38 +84,6 @@ _.extend (module.exports.prototype, {
 
 	has: function (key) {
 		return this.source.data [key] != undefined;
-	},
-
-	json: function () {
-		var result = _.extend ({
-			_id: this.id
-		}, this.source.data);
-
-		if (this._type) {
-			result._type = this._type.json ();
-		}
-
-		if (this._prefetch) {
-			var prefetch = {};
-			
-			_.each (this._prefetch, function (value, index) {
-				if (!value) return;
-
-				if (value.json) {
-					prefetch [index] = value.json ();
-				} else {
-					prefetch [index] = [];
-
-					_.each (value, function (model) {
-						prefetch [index].push (model.json ());
-					});
-				}
-			});
-
-			result._prefetch = prefetch;
-		}
-
-		return result;
 	},
 
 	cleanup: function () {

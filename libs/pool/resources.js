@@ -23,7 +23,7 @@ function urn2ddocId (urn) {
 }
 
 
-module.exports = function Resources (pool) {
+module.exports = function PoolResources (pool) {
 	this.pool = pool;
 	this.resources = [];
 };
@@ -34,9 +34,6 @@ _.extend (module.exports.prototype, {
 	pool: null, resources: null,
 
 	get: function (client, id) {
-		if (!id) return false; // throw new Error ('Resource id could not be empty');
-		if (typeof id != 'string') return false; // throw new Error ('Resource id must be a string', typeof id, 'given');
-
 		var db = this.pool.locate (client, id),
 			key = db + ',' + id,
 			resource = this.resources [key];

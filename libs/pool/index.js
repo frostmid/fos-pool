@@ -9,7 +9,7 @@ var Q = require ('q'),
 
 Q.longStackJumpLimit = 0;
 
-module.exports = function (options) {
+module.exports = function Pool (options) {
 	this.id = 'pool #' + Date.now ();
 	this.options = options;
 	this.server = (new Server (options.server)).lock (true);

@@ -1,7 +1,8 @@
 var	_ = require ('lodash'),
-	Q = require ('q');
+	Q = require ('q'),
+	ClientResource = require ('./resource');
 
-module.exports = function (client) {
+module.exports = function ClientResources (client) {
 	this.client = client;
 	this.pool = client.pool;
 
@@ -12,8 +13,20 @@ _.extend (module.exports.prototype, {
 	client: null, cache: null,
 
 	get: function (id) {
-		return this.cache [id] ||
-			(this.cache [id] = this.pool.resources.get (this.client, id));
+		if (!id) return false; // throw new Error ('Resource id could not be empty');
+		if (typeof id != 'string') return false; // throw new Error ('Resource id must be a string', typeof id, 'given');
+		
+		var resource = this.cache [id];
+
+		if (!resource) {
+			resource = this.cache [id] = new ClientResource (this.client, id);
+		}
+
+		return resource.ready ();
+	},
+
+	unset: function (id) {
+		delete this.cache [id];
 	},
 
 	create: function (data) {
