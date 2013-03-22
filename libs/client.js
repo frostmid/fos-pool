@@ -8,8 +8,6 @@ var _ = require ('lodash'),
 
 
 module.exports = function Client (pool, settings) {
-	this.id = 'client #' + Date.now ();
-
 	this.pool = pool;
 	this.settings = settings || {};
 	
@@ -27,6 +25,8 @@ _.extend (module.exports.prototype, {
 
 	name: null,
 	roles: null,
+
+	disposeDelay: 0,
 
 	fetch: function () {
 		return this.fetchSession ()

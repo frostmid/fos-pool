@@ -16,7 +16,7 @@ mixin (module.exports);
 _.extend (module.exports.prototype, {
 	source: null,
 
-	disposeDelay: 1000 * 30,
+	disposeDelay: 1000,
 
 	fetch: function () {
 		return this.resources.resolve (this.origin, this.id);
