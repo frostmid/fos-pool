@@ -4,7 +4,7 @@ var Q = require ('q'),
 	mixin = require ('fos-mixin'),
 	Server = require ('fos-couch'),
 
-	Client = require ('./client'),
+	Client = require ('../client'),
 	Resources = require ('./resources');
 
 Q.longStackJumpLimit = 0;

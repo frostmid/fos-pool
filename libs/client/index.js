@@ -4,7 +4,7 @@ var _ = require ('lodash'),
 	mixin = require ('fos-mixin'),
 	request = require ('fos-request'),
 
-	ClientResources = require ('./client-resources.js');
+	ClientResources = require ('./resources.js');
 
 
 module.exports = function Client (pool, settings) {
