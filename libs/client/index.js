@@ -74,7 +74,10 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		this.user.release (this);
+		if (this.user) {
+			this.user.release (this);
+		}
+		
 		this.resources.dispose ();
 		this.cleanup ();
 	},
