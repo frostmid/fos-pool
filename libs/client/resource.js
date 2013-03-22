@@ -8,6 +8,8 @@ module.exports = function ClientResource (client, id) {
 	this.id = id;
 	this.client = client;
 	this.change = _.bind (this.change, this);
+
+	this.setMaxListeners (1001);
 };
 
 mixin (module.exports);

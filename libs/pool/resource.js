@@ -9,6 +9,8 @@ module.exports = function PoolResource (resources, origin, id) {
 	this.id = id;
 
 	this.change = _.bind (this.change, this);
+
+	this.setMaxListeners (1002);
 };
 
 mixin (module.exports);
