@@ -26,7 +26,7 @@ _.extend (module.exports.prototype, {
 	name: null,
 	roles: null,
 
-	disposeDelay: 0,
+	disposeDelay: 5 * 1000,
 
 	fetch: function () {
 		return this.fetchSession ()
