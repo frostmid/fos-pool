@@ -47,6 +47,12 @@ _.extend (module.exports.prototype, {
 			.then (_.bind (this.ready, this));
 	},
 
+	remove: function () {
+		return this.save ({
+			_deleted: true
+		});
+	},
+
 	stringify: function () {
 		return JSON.stringify (this.getSource ().data);
 	},
