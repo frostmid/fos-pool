@@ -115,6 +115,7 @@ vows.describe ('fos-pool/general').addBatch ({
 						},
 
 						'no errors': function (resource) {
+							// console.log ('#', resource);
 							assert.isObject (resource);
 							assert.isNull (resource.error);
 						},

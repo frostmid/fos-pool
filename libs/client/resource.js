@@ -43,7 +43,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	save: function (data) {
-		this.resource.save (data, this.client.settings);
+		return this.resource.save (data, this.client.settings);
 	},
 
 	stringify: function () {
