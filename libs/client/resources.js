@@ -80,7 +80,6 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		console.log ('client was disposed');
 		this.client = null;
 		this.pool = null;
 		this.cache = null;
