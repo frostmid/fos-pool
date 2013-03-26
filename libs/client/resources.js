@@ -1,5 +1,5 @@
 var	_ = require ('lodash'),
-	Q = require ('q'),
+	Promises = require ('vow'),
 	ClientResource = require ('./resource');
 
 module.exports = function ClientResources (client) {
@@ -35,7 +35,7 @@ _.extend (module.exports.prototype, {
 			self = this,
 			app;
 
-		return Q.when (pool.locateType (data.type))
+		return Promises.when (pool.locateType (data.type))
 			.then (function () {
 				app = arguments [0];
 				return pool.selectDb (client, pool.getAppDbs (app));
@@ -62,7 +62,7 @@ _.extend (module.exports.prototype, {
 			
 			delete this.cache [id];
 
-			Q.when (resource)
+			Promises.when (resource)
 				.then (function (resource) {
 					resource.release (this.client);
 				})

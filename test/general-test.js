@@ -1,7 +1,7 @@
 var vows = require ('vows'),
 	assert = require ('assert'),
 
-	Q = require ('q'),
+	Promises = require ('vow'),
 	_  = require ('lodash'),
 	Pool = require ('../index.js');
 
@@ -43,7 +43,7 @@ vows.describe ('fos-pool/general').addBatch ({
 			var callback = wrap4promise (this.callback, this),
 				pool = new Pool (settings);
 
-			Q.when (pool.ready ())
+			Promises.when (pool.ready ())
 				.then (callback.success)
 				.fail (callback.error)
 				.done ();
@@ -58,7 +58,7 @@ vows.describe ('fos-pool/general').addBatch ({
 				var callback = wrap4promise (this.callback, this),
 					client = pool.client (signature);
 
-				Q.when (client)
+				Promises.when (client)
 					.then (callback.success)
 					.fail (callback.error)
 					.done ();
@@ -82,7 +82,7 @@ vows.describe ('fos-pool/general').addBatch ({
 						var callback = wrap4promise (this.callback, this),
 							resource = client.resources.get ('urn:debug:test/example');
 
-						Q.when (resource)
+						Promises.when (resource)
 							.then (callback.success)
 							.fail (callback.error)
 							.done ();
@@ -106,7 +106,7 @@ vows.describe ('fos-pool/general').addBatch ({
 							var callback = wrap4promise (this.callback, this),
 								newTitle = '#' + Date.now ();
 
-							Q.when (resource.save ({
+							Promises.when (resource.save ({
 								title: newTitle
 							}, signature))
 								.then (callback.success)
@@ -132,7 +132,7 @@ vows.describe ('fos-pool/general').addBatch ({
 						var callback = wrap4promise (this.callback, this),
 							resource = client.resources.get ('urn:debug:test/not-found');
 
-						Q.when (resource)
+						Promises.when (resource)
 							.fail (callback.success)
 							.done ();
 					},
@@ -147,7 +147,7 @@ vows.describe ('fos-pool/general').addBatch ({
 						var callback = wrap4promise (this.callback, this),
 							resource = client.resources.get ('urn:debug:test?limit=1');
 
-						Q.when (resource)
+						Promises.when (resource)
 							.then (callback.success)
 							.fail (callback.error)
 							.done ();
@@ -192,7 +192,7 @@ vows.describe ('fos-pool/general').addBatch ({
 						var callback = wrap4promise (this.callback, this),
 							resource = client.resources.get ('urn:app-not-found');
 
-						Q.when (resource)
+						Promises.when (resource)
 							.fail (callback.success)
 							.done ();
 					},
@@ -207,7 +207,7 @@ vows.describe ('fos-pool/general').addBatch ({
 						var callback = wrap4promise (this.callback, this),
 							resource = client.resources.get ('urn:debug:test?search=test&skip=0');
 
-						Q.when (resource)
+						Promises.when (resource)
 							.then (callback.success, callback.success)
 							.done ();
 					},
@@ -249,13 +249,14 @@ vows.describe ('fos-pool/general').addBatch ({
 				var callback = wrap4promise (this.callback, this),
 					client = pool.client ();
 
-				Q.when (client)
+				Promises.when (client)
 					.then (callback.success)
 					.fail (callback.error)
 					.done ();
 			},
 
 			'not null': function (client) {
+				// console.log (client.isReady);
 				assert.isNotNull (client);
 			},
 

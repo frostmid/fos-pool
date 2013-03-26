@@ -1,4 +1,4 @@
-var Q = require ('q'),
+var Promises = require ('vow'),
 	_ = require ('lodash'),
 
 	mixin = require ('fos-mixin'),
@@ -7,7 +7,7 @@ var Q = require ('q'),
 	Client = require ('../client'),
 	Resources = require ('./resources');
 
-Q.longStackJumpLimit = 0;
+// Promises.longStackJumpLimit = 0;
 
 module.exports = function Pool (options) {
 	this.id = 'pool #' + Date.now ();
@@ -55,13 +55,13 @@ _.extend (module.exports.prototype, {
 	},
 
 	fetch: function () {
-		return Q.when (this.server.ready ())
+		return Promises.when (this.server.ready ())
 			.then (_.bind (this.buildIndex, this));
 	},
 
 	buildIndex: function () {
 		// TODO: Rebuild index on view update
-		return Q.when (this.server.database ('sys/apps'))
+		return Promises.when (this.server.database ('sys/apps'))
 			.then (function (database) {
 				return database.views.get ('urn:applications', 'all');
 			})
@@ -165,12 +165,12 @@ _.extend (module.exports.prototype, {
 		if (app = this.findAppByType (type)) {
 			return app;
 		} else {
-			var deferred = Q.defer ();
+			var deferred = Promises.promise ();
 			deferred.reject ({
 				error: 'not_found',
 				reason: 'missing'
 			});
-			return deferred.promise;
+			return deferred;
 		}
 	},
 

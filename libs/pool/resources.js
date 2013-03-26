@@ -1,5 +1,5 @@
 var	_  = require ('lodash'),
-	Q = require ('q'),
+	Promises = require ('vow'),
 
 	mixin = require ('fos-mixin'),
 	Resource = require ('./resource'),
@@ -39,12 +39,12 @@ _.extend (module.exports.prototype, {
 			resource = this.resources [key];
 
 		if (!db) {
-			var deferred = Q.defer ();
+			var deferred = Promises.promise ();
 			deferred.reject ({
 				error: 'not_found',
 				reason: 'missing_origin'
 			});
-			return deferred.promise;
+			return deferred;
 		}
 
 		if (resource === undefined) {
@@ -68,7 +68,7 @@ _.extend (module.exports.prototype, {
 	resolve: function (origin, id) {
 		var pool = this.pool;
 
-		return Q.when (pool.server.database (origin))
+		return Promises.when (pool.server.database (origin))
 			.then (_.bind (function (database) {
 				if (isApp (id)) {
 					return this.resolveView (database, id);
@@ -81,7 +81,7 @@ _.extend (module.exports.prototype, {
 	resolveView: function (database, id) {
 		var ddocId = urn2ddocId (id);
 
-		return Q.when (database.documents.get ('_design/' + ddocId))
+		return Promises.when (database.documents.get ('_design/' + ddocId))
 			.then (function (designDoc) {
 				var uri = URIjs (id),
 					search = uri.search (true),
@@ -124,7 +124,7 @@ _.extend (module.exports.prototype, {
 				return resolved;
 			})
 			.then (function (resolved) {
-				return Q.when (database.views.get (resolved.design, resolved.view))
+				return Promises.when (database.views.get (resolved.design, resolved.view))
 					.then (function (view) {
 						return view.get (resolved);
 					});

@@ -1,5 +1,5 @@
 var _ = require ('lodash'),
-	Q = require ('q'),
+	Promises = require ('vow'),
 
 	mixin = require ('fos-mixin'),
 	request = require ('fos-request'),
@@ -8,6 +8,7 @@ var _ = require ('lodash'),
 
 
 module.exports = function Client (pool, settings) {
+	this.id = 'client #' + Date.now ();
 	this.pool = pool;
 	this.settings = settings || {};
 	
@@ -48,7 +49,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	fetchUser: function (id) {
-		return Q.when (this.pool.server.database ('_users'))
+		return Promises.when (this.pool.server.database ('_users'))
 			.then (function (database) {
 				return database.documents.get (id);
 			});
