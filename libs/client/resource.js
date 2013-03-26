@@ -103,6 +103,10 @@ _.extend (module.exports.prototype, {
 
 	removeAttachment: function (name) {
 		return this.resource.source.removeAttachment (name, this.client.settings);
+	},
+
+	errors: function () {
+		return this.resource.source.error;
 	}
 });
 
