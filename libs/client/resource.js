@@ -23,6 +23,7 @@ _.extend (module.exports.prototype, {
 
 	fetched: function (resource) {
 		this.resource = resource.lock (this);
+		this.resource.removeListener ('change', this.change);
 		this.resource.on ('change', this.change);
 	},
 
