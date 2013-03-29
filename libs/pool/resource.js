@@ -18,7 +18,7 @@ mixin (module.exports);
 _.extend (module.exports.prototype, {
 	source: null,
 
-	disposeDelay: 1000 * 60,
+	disposeDelay: 1000 * 5,
 
 	fetch: function () {
 		return this.resources.resolve (this.origin, this.id);
@@ -73,24 +73,19 @@ _.extend (module.exports.prototype, {
 
 	dispose: function () {
 		this.resources.unset (this);
-		this.removeAllListeners ();
-
+		
 		if (this.source) {
 			this.source
 				.removeListener ('change', this.change)
 				.release (this);
 		}
 
-		this.cleanup ();
+		this.source = null;
+		this.change = null;
+		this.resources = null;
 	},
 
 	has: function (key) {
 		return this.source.data [key] != undefined;
-	},
-
-	cleanup: function () {
-		this.source = null;
-		this.changes = null;
-		this.resources = null;
 	}
 });

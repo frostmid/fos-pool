@@ -20,13 +20,26 @@ _.extend (module.exports.prototype, {
 
 		if (!resource) {
 			resource = this.cache [id] = new ClientResource (this.client, id);
+			resource.lock (this.client);
 		}
 
 		return resource.ready ();
 	},
 
 	unset: function (id) {
-		delete this.cache [id];
+		if (this.has (id)) {
+			var resource = this.cache [id],
+				self = this;
+			
+			Promises.when (resource)
+				.then (function (resource) {
+					resource.release (self.client);
+				})
+				.always (function () {
+					delete self.cache [id];
+				})
+				.done ();
+		}
 	},
 
 	create: function (data) {
@@ -53,21 +66,6 @@ _.extend (module.exports.prototype, {
 
 	has: function (id) {
 		return this.cache [id] !== undefined;
-	},
-
-	release: function (id) {
-		if (this.has (id)) {
-			// todo: beautify that
-			var resource = this.cache [id];
-			
-			delete this.cache [id];
-
-			Promises.when (resource)
-				.then (function (resource) {
-					resource.release (this.client);
-				})
-				.done ();
-		}
 	},
 	
 	

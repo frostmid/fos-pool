@@ -18,7 +18,9 @@ _.extend (module.exports.prototype, {
 	id: null, client: null, resource: null,
 
 	fetch: function () {
-		return this.client.pool.resources.get (this.client, this.id);
+		if (this.client) {
+			return this.client.pool.resources.get (this.client, this.id);
+		}
 	},
 
 	fetched: function (resource) {
@@ -28,15 +30,17 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		this.client.resources.unset (this.id);
+		console.log ('i am very disposed', this.id);
 
 		if (this.resource) {
 			this.resource.removeListener ('change', this.change);
 			this.resource.release (this);
 			this.resource = null;
 		}
+
 		this.client = null;
 		this.id = null;
+		this.change = null;
 	},
 
 	change: function () {

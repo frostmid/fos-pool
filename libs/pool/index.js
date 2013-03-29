@@ -165,12 +165,10 @@ _.extend (module.exports.prototype, {
 		if (app = this.findAppByType (type)) {
 			return app;
 		} else {
-			var deferred = Promises.promise ();
-			deferred.reject ({
+			return Promises.reject ({
 				error: 'not_found',
 				reason: 'missing'
 			});
-			return deferred;
 		}
 	},
 

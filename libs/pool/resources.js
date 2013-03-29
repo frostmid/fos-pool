@@ -25,7 +25,7 @@ function urn2ddocId (urn) {
 
 module.exports = function PoolResources (pool) {
 	this.pool = pool;
-	this.resources = [];
+	this.resources = {};
 };
 
 mixin (module.exports);
@@ -39,12 +39,10 @@ _.extend (module.exports.prototype, {
 			resource = this.resources [key];
 
 		if (!db) {
-			var deferred = Promises.promise ();
-			deferred.reject ({
+			return Promises.reject ({
 				error: 'not_found',
 				reason: 'missing_origin'
 			});
-			return deferred;
 		}
 
 		if (resource === undefined) {
@@ -66,16 +64,17 @@ _.extend (module.exports.prototype, {
 	},
 
 	resolve: function (origin, id) {
-		var pool = this.pool;
+		var pool = this.pool,
+			self = this;
 
 		return Promises.when (pool.server.database (origin))
-			.then (_.bind (function (database) {
+			.then (function (database) {
 				if (isApp (id)) {
-					return this.resolveView (database, id);
+					return self.resolveView (database, id);
 				} else {
 					return database.documents.get (id);	// <- TODO: Pass client to sign request
 				}
-			}, this));
+			});
 	},
 
 	resolveView: function (database, id) {

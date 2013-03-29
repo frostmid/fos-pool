@@ -80,17 +80,11 @@ _.extend (module.exports.prototype, {
 		}
 		
 		this.resources.dispose ();
-		this.cleanup ();
-	},
-
-	cleanup: function () {
+		
 		this.resources = null;
 		this.user = null;
 		this.settings = null;
 		this.pool = null;
-	},
-
-	get: function () {
-		throw new Error ('who are you to call me?')
+		this.settings = null;
 	}
 });
