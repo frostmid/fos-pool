@@ -15,15 +15,22 @@ module.exports = function ClientResource (client, id) {
 mixin (module.exports);
 
 _.extend (module.exports.prototype, {
-	id: null, client: null, resource: null,
+	id: null, client: null, resource: null, error: null,
 
 	fetch: function () {
 		if (this.client) {
-			return this.client.pool.resources.get (this.client, this.id);
+			var result = this.client.pool.resources.get (this.client, this.id);
+			if (result.ready) {
+				return result.ready ();
+			} else {
+				return result;
+			}
 		}
 	},
 
 	fetched: function (resource) {
+		this.error = resource.error;
+
 		this.resource = resource.lock (this);
 		this.resource.removeListener ('change', this.change);
 		this.resource.on ('change', this.change);
@@ -39,6 +46,7 @@ _.extend (module.exports.prototype, {
 		this.client = null;
 		this.id = null;
 		this.change = null;
+		this.error = null;
 	},
 
 	change: function () {
