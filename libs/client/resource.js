@@ -30,8 +30,6 @@ _.extend (module.exports.prototype, {
 	},
 
 	dispose: function () {
-		console.log ('i am very disposed', this.id);
-
 		if (this.resource) {
 			this.resource.removeListener ('change', this.change);
 			this.resource.release (this);
