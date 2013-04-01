@@ -11,7 +11,7 @@ module.exports = function Client (pool, settings) {
 	this.id = 'client #' + Date.now ();
 	this.pool = pool;
 	this.settings = settings || {};
-	
+
 	this.resources = new ClientResources (this);
 };
 
@@ -26,6 +26,8 @@ _.extend (module.exports.prototype, {
 
 	name: null,
 	roles: null,
+
+	sessionId: null,
 
 	disposeDelay: 5 * 1000,
 
@@ -64,6 +66,12 @@ _.extend (module.exports.prototype, {
 
 	sign: function (options) {
 		var settings = this.settings;
+
+		options = options || {};
+
+		if (this.sessionId) {
+			options.sessionId = this.sessionId;
+		}
 
 		if (settings.oauth) {
 			options.oauth = settings.oauth;
