@@ -66,7 +66,6 @@ _.extend (module.exports.prototype, {
 		}
 
 		return this.source.save (this.id.split ('/') [0], sign)
-			.then (_.bind (this.returnNotReady, this))
 			.then (_.bind (this.ready, this));
 	},
 
