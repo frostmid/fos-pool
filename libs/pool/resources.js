@@ -106,7 +106,7 @@ _.extend (module.exports.prototype, {
 					resolved.descending = search.descending;
 				}
 
-				if (search.include_docs == 'true') {
+				if (search.include_docs) {
 					resolved.include_docs = true;
 				}
 
