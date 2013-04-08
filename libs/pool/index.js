@@ -85,14 +85,6 @@ _.extend (module.exports.prototype, {
 		}, this);
 
 		this.appIndex = appIndex;
-
-		// this.appNames = _.sortBy (
-		// 	_.keys (appIndex),
-
-		// 	function (name) {
-		// 		return name.length;
-		// 	}
-		// );
 		this.appNames = _.keys (appIndex);
 
 		///

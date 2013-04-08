@@ -120,6 +120,10 @@ _.extend (module.exports.prototype, {
 
 				resolved.options = search;
 
+				if (resolved ['no-models']) {
+					resolved.options ['no-models'] = resolved ['no-models'];
+				}
+
 				return resolved;
 			})
 			.then (function (resolved) {
