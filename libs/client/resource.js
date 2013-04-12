@@ -106,6 +106,7 @@ _.extend (module.exports.prototype, {
 	},
 
 	getAttachment: function (name) {
+		name = decodeURIComponent (name);
 		return this.resource.source.getAttachment (name, this.client.settings);
 	},
 
