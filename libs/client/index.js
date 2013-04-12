@@ -41,7 +41,10 @@ _.extend (module.exports.prototype, {
 		return request (
 			this.sign ({
 				url: this.pool.server.url + '_session',
-				accept: 'application/json'
+				accept: 'application/json',
+				headers: {
+					'accept-encoding': 'gzip, deflate'
+				}
 			})
 		)
 			.then (function (resp) {
