@@ -95,11 +95,13 @@ _.extend (module.exports.prototype, {
 					evaluate = require ('fos-evaluate');
 
 				if (search.limit) {
-					resolved.limit = search.limit;
+					resolved.limit = parseInt (search.limit);
 				}
 
 				if (search.skip) {
-					resolved.skip = search.skip;
+					resolved.skip = parseInt (search.skip);
+				} else {
+					resolved.skip = 0;
 				}
 
 				if (search.descending) {
