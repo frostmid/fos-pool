@@ -95,7 +95,7 @@ _.extend (module.exports.prototype, {
 					evaluate = require ('fos-evaluate');
 
 				if (search.limit) {
-					resolved.limit = parseInt (search.limit);
+					resolved.limit = parseInt (search.limit) || 0;
 				} else {
 					resolved.limit = 10;	// TODO: Move global config
 				}
