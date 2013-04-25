@@ -96,6 +96,8 @@ _.extend (module.exports.prototype, {
 
 				if (search.limit) {
 					resolved.limit = parseInt (search.limit);
+				} else {
+					resolved.limit = 10;	// TODO: Move global config
 				}
 
 				if (search.skip) {
