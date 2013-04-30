@@ -124,6 +124,14 @@ _.extend (module.exports.prototype, {
 
 				resolved.options = search;
 
+				if (resolved.limit) {
+					resolved.options.limit = resolved.limit;
+				}
+
+				if (resolved.skip) {
+					resolved.options.skip = resolved.skip;
+				}
+
 				if (resolved ['no-models']) {
 					resolved.options ['no-models'] = resolved ['no-models'];
 				}
