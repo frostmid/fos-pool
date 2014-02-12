@@ -14,7 +14,7 @@
 		"URIjs": "*",
 		"fos-mixin": "git://github.com/lyxsus/fos-mixin.git",
 		"fos-request": "git://github.com/lyxsus/fos-request.git",
-		"fos-couch": "git://github.com/lyxsus/fos-couch.git",
+		"fos-couch": "git://github.com/frostmid/fos-couch.git",
 		"fos-evaluate": "git://github.com/lyxsus/fos-evaluate.git"
 	},
 	"devDependencies": {
