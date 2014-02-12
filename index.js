@@ -1,1 +1,1 @@
-module.exports = require ('./libs/pool');
+module.exports = require ('./lib/Pool');
